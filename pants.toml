@@ -1,0 +1,47 @@
+[GLOBAL]
+pants_version = "2.17.0"
+
+backend_packages.add = [
+  "pants.backend.build_files.fmt.black",  
+  "pants.backend.python",
+  "pants.backend.python.lint.black",
+  "pants.backend.python.lint.flake8",
+  "pants.backend.python.lint.isort",
+  "pants.backend.python.lint.docformatter",
+  "pants.backend.python.typecheck.mypy",
+  "pants.backend.python.lint.pyupgrade",
+]
+
+[source]
+root_patterns = ["/"]
+
+[python]
+# the default interpreter constraints for code in this repo. ondividual targets can 
+# override this with the `interpreter_constraints` field:
+# https://www.pantsbuild.org/docs/python-interpreter-compatibility.
+interpreter_constraints = ["==3.11.*"]
+enable_resolves = true
+default_resolve = "python_default"
+
+[python.resolves]
+base = "kittl/libs/base/base.lock"
+fancy = "kittl/libs/fancy/fancy.lock"
+python_default = "python_default.lock"
+
+[python-bootstrap]
+# we search for interpreters in the `$(pyenv root)/versions` folder
+# we avoid "<PATH>" for incompatibility issues in macos: 
+# https://www.pantsbuild.org/docs/python-interpreter-compatibility#changing-the-interpreter-search-path
+search_path = ["<PYENV>"]
+
+[python-infer]
+# pants 2.17 is transitioning to a new, faster parser for dependency inference
+use_rust_parser = true
+
+
+[anonymous-telemetry]
+# do not send usage data to Pants developers
+enabled = false
+
+[generate-lockfiles]
+diff = true
